@@ -1,15 +1,28 @@
 import { Box, Button, Card, Stack, Typography } from "@mui/material";
-import React from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../config/firebase";
 import InputText from "../../components/Inputs/InputText";
 import { FormProvider, useForm } from "react-hook-form";
+import { NavLink } from "react-router-dom";
 
 const Login = () => {
   const methods = useForm();
 
   const { handleSubmit } = methods;
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    const { email, password } = data;
+
+    console.log(email, password);
+
+    try {
+      const res = await signInWithEmailAndPassword(auth, email, password);
+      console.log(res.user);
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+    }
   };
 
   return (
@@ -30,7 +43,18 @@ const Login = () => {
             <Stack spacing={2}>
               <InputText name="email" label="Correo Electronico" />
               <InputText name="password" label="Contraseña" />
-              <Button variant="contained">Ingresar</Button>
+              <Button type="submit" variant="contained">
+                Ingresar
+              </Button>
+              <NavLink to="/register">
+                <Button
+                  fullWidth
+                  sx={{ backgroundColor: "orange" }}
+                  variant="contained"
+                >
+                  Registrarse
+                </Button>
+              </NavLink>
             </Stack>
           </form>
         </FormProvider>
